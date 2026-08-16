@@ -25,7 +25,7 @@ def get_playlist_id():
         channel_items =data["items"][0]
         channel_playlistId = channel_items["contentDetails"]["relatedPlaylists"]['uploads']
 
-        # print(channel_playlistId)
+        print(channel_playlistId)
         
         return channel_playlistId
 

@@ -82,20 +82,6 @@ jobs:
         - name: Set up Docker Compose
           if: steps.changed-files-tests.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch'
           run: docker compose up -d
-          run: |
-            if ! docker compose up -d; then
-              echo "=== Container Status ==="
-              docker compose ps -a
-
-              echo "=== PostgreSQL Logs ==="
-              docker compose logs --no-color --tail=100 postgres
-
-              echo "=== PostgreSQL Healthcheck ==="
-              docker inspect postgres \
-                --format '{{json .State.Health}}'
-
-              exit 1
-            fi
         - name: Run Unit and Integration Tests
           if: steps.changed-files-tests.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch'
           run: docker exec -t airflow-worker sh -c "pytest tests/ -v"

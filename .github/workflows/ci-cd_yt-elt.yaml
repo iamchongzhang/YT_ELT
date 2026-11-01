@@ -79,9 +79,31 @@ jobs:
               dags/**
               include/**
               docker-compose.yaml
+        #test
+        - name: Prepare Airflow Logs
+          run: |
+            mkdir -p logs/dag_processor_manager
+            sudo chown -R 50000:0 logs
+            sudo chmod -R u+rwX,g+rwX logs
+            ls -ld logs logs/dag_processor_manager
+        #上面是测试
         - name: Set up Docker Compose
           if: steps.changed-files-tests.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch'
           run: docker compose up -d
+        #test
+        - name: Check Airflow Log Permissions
+          run: |
+            docker exec airflow-worker id
+
+            docker exec airflow-worker sh -c '
+              ls -ld /opt/airflow/logs
+              ls -ld /opt/airflow/logs/dag_processor_manager
+
+              touch /opt/airflow/logs/dag_processor_manager/test.log
+              rm /opt/airflow/logs/dag_processor_manager/test.log
+            '
+         #上面是测试
+      
         - name: Run Unit and Integration Tests
           if: steps.changed-files-tests.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch'
           run: docker exec -t airflow-worker sh -c "pytest tests/ -v"

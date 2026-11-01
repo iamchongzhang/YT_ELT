@@ -13,7 +13,7 @@ def api_key():
 @pytest.fixture
 def channel_handle():
     with mock.patch.dict("os.environ", AIRFLOW_VAR_CHANNEL_HANDLE="MRCHEESE"):
-        yield Variable.get("API_KEY")
+        yield Variable.get("CHANNEL_HANDLE")
 
 @pytest.fixture
 def mock_postgres_conn_vars():
